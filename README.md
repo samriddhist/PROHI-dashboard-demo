@@ -1,10 +1,6 @@
 # PROHI Dashboard Example
 
-<<<<<<< HEAD
-# [Cancer Survivability prediction RECTUM-Rippers group]
-=======
 # [Cancer Survivability prediction RECTUM-Rippers]
->>>>>>> 630abd06a4d5329b92a0fc054637745562c07e6a
 
 _You can modify this README file with all the information that your team consider relevant for a technical audience who would like to understand your project or to run it in the future._
 
