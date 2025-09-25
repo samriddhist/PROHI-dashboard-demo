@@ -1,8 +1,5 @@
 import streamlit as st
 
-st.set_page_config(
-    page_title="Predicting Colorectal Cancer Survivability Dashboard",layout="wide")
-
 st.sidebar.success("Select a Tab Above")
 
 st.sidebar.image("./assets/Colorectal Cancer Logo.png",)
