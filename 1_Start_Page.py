@@ -14,14 +14,26 @@ st.markdown("""
         text-align: center;
         color: #1261B5;
     ">
-    Colorectal Cancer Global Dataset & Predictions
+    Predicting Colorectal Cancer Survivability Dashboard
     </h1>
 """, unsafe_allow_html=True)
 
 with st.container():
-    st.write("What is colorectal cancer?")
-    st.write("What is it important to investigate?")
-    st.write("What can you find on this dashboard?")
+    st.write("""**What is colorectal cancer?**
+
+Colorectal cancer, also known as bowel cancer, colon cancer, or rectal cancer, 
+is the development of cancer from the colon or rectum. 
+It is the consequence of uncontrolled growth of colon cells that can invade/spread to other parts of the body.""")
+
+    st.write("""**What is it important to investigate?**
+
+Worldwide, colorectal cancer is the third most common cancer,
+with over 1.9 million new cases diagnosed and more than 900,000 deaths annually in recent years.""")
+
+    st.write("""**What can you find on this dashboard?**
+
+This dashboard includes ...""")
+
 
 
 
