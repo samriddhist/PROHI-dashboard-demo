@@ -1,16 +1,32 @@
 import streamlit as st
 
-st.header("About this Project")
+st.set_page_config(
+    page_title="About",layout="wide")
+
+st.sidebar.success("Select a tab above.")
+
+st.sidebar.image("./assets/Colorectal Cancer Logo.png",)
+
+st.markdown("""
+    <h1 style="
+        font-size: 60px;
+        font-weight: 700;
+        text-align: center;
+        color: #1261B5;
+    ">
+    About
+    </h1>
+""", unsafe_allow_html=True)
 
 with st.container():
-    st.write("""Dataset Infromation 
+    st.write(""" #### Dataset Infromation
 
              The link to the dataset is: https://www.kaggle.com/datasets/ankushpanday2/colorectal-cancer-global-dataset-and-predictions/data
              It includes 28 features..
 
 """)
 
-    st.write("""Group Members
+    st.write(""" #### Group Members
              
              Amanuel Teklehaimanot
                 Contact Information: 
@@ -34,6 +50,6 @@ with st.container():
              
              """)
 
-    st.write("""References 
+    st.write(""" #### References
 
 """)
