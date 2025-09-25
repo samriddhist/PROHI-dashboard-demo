@@ -17,7 +17,7 @@ Include the name, logo and images refering to your project
 
 ## Introduction
 
-[Project ] is an interactive web dashboard to.... 
+[Project ] is an interactive web dashboard to.... .
 
 The problem detected was...
 
