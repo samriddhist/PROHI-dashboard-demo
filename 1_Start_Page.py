@@ -5,4 +5,9 @@ st.set_page_config(
 
 st.sidebar.success("Select a tab above.")
 
-st.write("# Colorectal Cancer Global Dataset & Predictions")
+st.title("# Colorectal Cancer Global Dataset & Predictions")
+
+with st.container():
+    st.write("This is inside the container")
+
+
