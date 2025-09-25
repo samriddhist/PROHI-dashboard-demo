@@ -4,16 +4,26 @@ st.sidebar.success("Select a Tab Above")
 
 st.sidebar.image("./assets/Colorectal Cancer Logo.png",)
 
-st.markdown("""
-    <h1 style="
-        font-size: 60px;
-        font-weight: 700;
-        text-align: center;
-        color: #1261B5;
-    ">
-    Predicting Colorectal Cancer Survivability Dashboard
-    </h1>
-""", unsafe_allow_html=True)
+col1, col2, col3 = st.columns([1, 4, 1])  # 3 columns: left image, title, right image
+
+with col1:
+    st.image("./assets/Colorectal Cancer Logo.png", width=80)  # smaller image
+
+with col2:
+    st.markdown("""
+        <h1 style="
+            font-size: 50px;
+            font-weight: 700;
+            text-align: center;
+            color: #1261B5;
+        ">
+        Predicting Colorectal Cancer Survivability Dashboard
+        </h1>
+    """, unsafe_allow_html=True)
+
+with col3:
+    st.image("./assets/Colorectal Cancer Logo.png", width=80)  # smaller image
+
 
 with st.container():
     st.write("""**What is colorectal cancer?**
