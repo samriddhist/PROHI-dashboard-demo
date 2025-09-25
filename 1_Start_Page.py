@@ -4,10 +4,10 @@ st.sidebar.success("Select a Tab Above")
 
 st.sidebar.image("./assets/Colorectal Cancer Logo.png",)
 
-col1, col2, col3 = st.columns([1, 4, 1])  # 3 columns: left image, title, right image
+col1, col2, col3 = st.columns([1, 4, 1]) 
 
 with col1:
-    st.image("./assets/Colorectal Cancer Logo.png", width=80)  # smaller image
+    st.image("./assets/Colorectal Cancer Logo.png", width=80)  
 
 with col2:
     st.markdown("""
@@ -22,7 +22,7 @@ with col2:
     """, unsafe_allow_html=True)
 
 with col3:
-    st.image("./assets/Colorectal Cancer Logo.png", width=80)  # smaller image
+    st.image("./assets/Colorectal Cancer Logo.png", width=80)  
 
 
 with st.container():
