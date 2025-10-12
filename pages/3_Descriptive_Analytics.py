@@ -38,57 +38,32 @@ question = st.selectbox(
 )
 
 if "Q1" in question:
-    age_col = "Age"
-    gender_col = "Gender"
+    st.subheader("Q1: Age and Gender Distribution")
+    st.write("What is the age and gender distribution of colorectal cancer patients in the dataset?")
 
-    df[age_col] = pd.to_numeric(df[age_col], errors="coerce")
-    df.loc[(df[age_col] < 0) | (df[age_col] > 120), age_col] = pd.NA
+    df["Age"] = pd.to_numeric(df["Age"], errors="coerce")
+    df = df[(df["Age"] > 0) & (df["Age"] < 120)]
+    df["Gender"] = df["Gender"].str.strip().str.title()
 
-    def normalize_gender(x):
-        if pd.isna(x): return "Unknown"
-        s = str(x).strip().lower()
-        if s in {"m","male","man"}: return "Male"
-        if s in {"f","female","woman"}: return "Female"
-        return "Other/Unknown"
+    col1, col2 = st.columns(2)
 
-    df[gender_col] = df[gender_col].apply(normalize_gender)
+    with col1:
+        fig_age = px.histogram(df, x="Age", nbins=20, color="Gender", marginal="box",
+                               title="Age Distribution by Gender", opacity=0.7)
+        st.plotly_chart(fig_age, use_container_width=True)
 
-    sns.set(style="whitegrid", palette="Set2", font_scale=1.2)
+    with col2:
+        gender_counts = df["Gender"].value_counts()
+        fig_gender = px.pie(values=gender_counts.values, names=gender_counts.index,
+                            title="Gender Distribution (%)", color_discrete_sequence=px.colors.qualitative.Set2)
+        st.plotly_chart(fig_gender, use_container_width=True)
 
-    st.subheader("Age and Gender Distribution of Colorectal Cancer Patients")
-
-    fig1, ax1 = plt.subplots(figsize=(8,5))
-    sns.histplot(data=df, x=age_col, bins=20, kde=True, color="skyblue", ax=ax1)
-    ax1.set_title("Age Distribution")
-    ax1.set_xlabel("Age (years)")
-    ax1.set_ylabel("Count")
-    st.pyplot(fig1)
-
-    fig2, ax2 = plt.subplots(figsize=(6,5))
-    sns.countplot(data=df, x=gender_col, order=df[gender_col].value_counts().index, ax=ax2)
-    ax2.set_title("Gender Distribution")
-    st.pyplot(fig2)
-
-    fig3, ax3 = plt.subplots(figsize=(7,5))
-    sns.boxplot(data=df, x=gender_col, y=age_col, ax=ax3)
-    ax3.set_title("Age Distribution by Gender")
-    st.pyplot(fig3)
-
-    st.write("### Gender Distribution Summary")
-    gender_counts = df[gender_col].value_counts(dropna=False)
-    gender_pct = df[gender_col].value_counts(normalize=True, dropna=False) * 100
-    for g in gender_counts.index:
-        st.write(f"**{g}:** {gender_counts[g]} patients ({gender_pct[g]:.1f}%)")
-
-    st.write("### Age Descriptive Statistics (Overall)")
-    st.dataframe(df[age_col].describe())
-
-    st.write("### Age Descriptive Statistics by Gender")
-    st.dataframe(df.groupby(gender_col)[age_col].describe())
+    st.write("**Descriptive Stats:**")
+    st.dataframe(df.groupby("Gender")["Age"].describe().round(2))
 
 if "Q2" in question:
     st.subheader("Q2: Distribution of Cancer Stages")
-    st.write("Explore how patients are distributed across different cancer stages.")
+    st.write("What is the distribution of cancer stages among patients?")
 
     df["Cancer_Stage"] = df["Cancer_Stage"].astype(str).str.strip().str.title()
     stage_counts = df["Cancer_Stage"].value_counts()
@@ -113,7 +88,7 @@ if "Q2" in question:
 
 if "Q3" in question:
     st.subheader("Q3: Survivability Across Cancer Stages")
-    st.write("Compare 5-year survival rates across cancer stages.")
+    st.write("How does survivability vary across cancer stages?")
 
     df["Cancer_Stage"] = df["Cancer_Stage"].astype(str).str.strip().str.title()
     df["Survival_5_years"] = df["Survival_5_years"].str.strip().str.lower().map({"yes": 1, "no": 0})
@@ -132,7 +107,7 @@ if "Q3" in question:
 
 if "Q4" in question:
     st.subheader("Q4: Smoking Among Non-Survivors")
-    st.write("Analyze how many patients who did not survive past 5 years had a history of smoking.")
+    st.write("Among patients who did not survive past 5 years, how many had a history of smoking?")
 
     df["Survival_5_years"] = df["Survival_5_years"].astype(str).str.lower().map({"yes":1, "no":0})
     df["Smoking_History"] = df["Smoking_History"].astype(str).str.lower().map({"yes":1, "no":0})
@@ -148,7 +123,7 @@ if "Q4" in question:
 
 if "Q5" in question:
     st.subheader("Q5: Tumor Size Variation Across Stages")
-    st.write("Understand how average tumor size changes across different cancer stages.")
+    st.write("How does the average tumor size vary across cancer stages?")
 
     df["Cancer_Stage"] = df["Cancer_Stage"].astype(str).str.strip().str.title()
 
