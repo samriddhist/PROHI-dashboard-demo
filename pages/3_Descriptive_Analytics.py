@@ -23,14 +23,6 @@ st.markdown("""
     </h1>
 """, unsafe_allow_html=True)
 
-st.markdown(
-
-        """
-        Propose a pipeline where a user can interact with UI elements to get interesting insights about the dataset using analytical techniques of descriptive nature (e.g., summary, pivot tables, basic plots).
-        The dashboard should be self-explanatory as it shows enough text to understand what the data is about and how to interact with it.
-        """
-    )
-
 def load_data():
     current_dir = os.path.dirname(__file__)
     file_path = os.path.join(current_dir, "..", "jupyter-notebooks", "colorectal_cancer_dataset.csv")
@@ -51,29 +43,64 @@ question = st.selectbox(
 )
 
 if "Q1" in question:
-    st.subheader("Q1: Age and Gender Distribution")
-    st.write("Analyze the distribution of age and gender among colorectal cancer patients.")
+   age_col = "Age"
+gender_col = "Gender"
 
-    # Clean
-    df["Age"] = pd.to_numeric(df["Age"], errors="coerce")
-    df = df[(df["Age"] > 0) & (df["Age"] < 120)]
-    df["Gender"] = df["Gender"].str.strip().str.title()
+# Clean and normalize data
+df[age_col] = pd.to_numeric(df[age_col], errors="coerce")
+df.loc[(df[age_col] < 0) | (df[age_col] > 120), age_col] = pd.NA
 
-    col1, col2 = st.columns(2)
+def normalize_gender(x):
+    if pd.isna(x): return "Unknown"
+    s = str(x).strip().lower()
+    if s in {"m","male","man"}: return "Male"
+    if s in {"f","female","woman"}: return "Female"
+    return "Other/Unknown"
 
-    with col1:
-        fig_age = px.histogram(df, x="Age", nbins=20, color="Gender", marginal="box",
-                               title="Age Distribution by Gender", opacity=0.7)
-        st.plotly_chart(fig_age, use_container_width=True)
+df[gender_col] = df[gender_col].apply(normalize_gender)
 
-    with col2:
-        gender_counts = df["Gender"].value_counts()
-        fig_gender = px.pie(values=gender_counts.values, names=gender_counts.index,
-                            title="Gender Distribution (%)", color_discrete_sequence=px.colors.qualitative.Set2)
-        st.plotly_chart(fig_gender, use_container_width=True)
+# Seaborn
+sns.set(style="whitegrid", palette="Set2", font_scale=1.2)
 
-    st.write("**Descriptive Stats:**")
-    st.dataframe(df.groupby("Gender")["Age"].describe().round(2))
+# 1. Age distribution (histogram with kernel density)
+plt.figure(figsize=(8,5))
+sns.histplot(data=df, x=age_col, bins=20, kde=True, color="skyblue")
+plt.title("Age Distribution of Colorectal Cancer Patients")
+plt.xlabel("Age (years)")
+plt.ylabel("Count")
+plt.tight_layout()
+plt.show()
+
+# 2. Gender distribution (bar chart)
+plt.figure(figsize=(6,5))
+sns.countplot(data=df, x=gender_col, order=df[gender_col].value_counts().index)
+plt.title("Gender Distribution of Colorectal Cancer Patients")
+plt.xlabel("Gender")
+plt.ylabel("Count")
+plt.tight_layout()
+plt.show()
+
+# 3. Age distribution by gender (boxplot)
+plt.figure(figsize=(7,5))
+sns.boxplot(data=df, x=gender_col, y=age_col)
+plt.title("Age Distribution by Gender")
+plt.xlabel("Gender")
+plt.ylabel("Age (years)")
+plt.tight_layout()
+plt.show()
+
+#Text outputs
+print("Gender Distribution")
+gender_counts = df[gender_col].value_counts(dropna=False)
+gender_pct = df[gender_col].value_counts(normalize=True, dropna=False) * 100
+for g in gender_counts.index:
+    print(f"{g}: {gender_counts[g]} patients ({gender_pct[g]:.1f}%)")
+
+print("\nAge Descriptive Statistics (Overall)")
+print(df[age_col].describe())
+
+print("\nAge Descriptive Statistics by Gender")
+print(df.groupby(gender_col)[age_col].describe())
 
 if "Q2" in question:
     st.subheader("Q2: Distribution of Cancer Stages")
