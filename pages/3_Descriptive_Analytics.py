@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
+import os
 
 st.set_page_config(
     page_title="Descriptive Analytics",layout="wide")
@@ -31,7 +32,9 @@ st.markdown(
     )
 
 def load_data():
-    df = pd.read_csv("colorectal_cancer_dataset.csv")
+    current_dir = os.path.dirname(__file__)
+    file_path = os.path.join(current_dir, "..", "jupyter-notebooks", "colorectal_cancer_dataset.csv")
+    df = pd.read_csv(file_path)
     return df
 
 df = load_data()
