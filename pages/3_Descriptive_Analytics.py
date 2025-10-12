@@ -26,9 +26,8 @@ st.markdown("""
     </h1>
 """, unsafe_allow_html=True)
 
-df = pd.read_csv ("/Users/samriddhitripathi/Documents/GitHub/PROHI-dashboard-demo/jupyter-notebooks/colorectal_cancer_dataset.csv")
+df = pd.read_csv ("jupyter-notebooks/colorectal_cancer_dataset.csv", sep=";")
                   
-
 question = st.selectbox(
     "Select an analytical question:",
     ["Q1: Age and Gender Distribution",
@@ -39,11 +38,10 @@ question = st.selectbox(
 )
 
 if "Q1" in question:
-    age_col = "Age"
-    gender_col = "Gender"
 
-    df[age_col] = pd.to_numeric(df[age_col], errors="coerce")
-    df.loc[(df[age_col] < 0) | (df[age_col] > 120), age_col] = pd.NA
+    print(np.shape(df))
+    df[Age] = pd.to_numeric(df[Age], errors="coerce")
+    df.loc[(df[Age] < 0) | (df[Age] > 120), Age] = pd.NA
 
     def normalize_gender(x):
         if pd.isna(x): return "Unknown"
@@ -52,7 +50,7 @@ if "Q1" in question:
         if s in {"f","female","woman"}: return "Female"
         return "Other/Unknown"
 
-    df[gender_col] = df[gender_col].apply(normalize_gender)
+    df[Gender] = df[Gender].apply(normalize_gender)
 
     sns.set(style="whitegrid", palette="Set2", font_scale=1.2)
 
@@ -66,23 +64,23 @@ if "Q1" in question:
     st.pyplot(fig1)
 
     fig2, ax2 = plt.subplots(figsize=(6,5))
-    sns.countplot(data=df, x=gender_col, order=df[gender_col].value_counts().index, ax=ax2)
+    sns.countplot(data=df, x=Gender, order=df[Gender].value_counts().index, ax=ax2)
     ax2.set_title("Gender Distribution")
     st.pyplot(fig2)
 
     fig3, ax3 = plt.subplots(figsize=(7,5))
-    sns.boxplot(data=df, x=gender_col, y=age_col, ax=ax3)
+    sns.boxplot(data=df, x=Gender, y=Age, ax=ax3)
     ax3.set_title("Age Distribution by Gender")
     st.pyplot(fig3)
 
     st.write("### Gender Distribution Summary")
-    gender_counts = df[gender_col].value_counts(dropna=False)
-    gender_pct = df[gender_col].value_counts(normalize=True, dropna=False) * 100
+    gender_counts = df[Gender].value_counts(dropna=False)
+    gender_pct = df[Gender].value_counts(normalize=True, dropna=False) * 100
     for g in gender_counts.index:
         st.write(f"**{g}:** {gender_counts[g]} patients ({gender_pct[g]:.1f}%)")
 
     st.write("### Age Descriptive Statistics (Overall)")
-    st.dataframe(df[age_col].describe())
+    st.dataframe(df[Age].describe())
 
     st.write("### Age Descriptive Statistics by Gender")
-    st.dataframe(df.groupby(gender_col)[age_col].describe())
+    st.dataframe(df.groupby(Gender)[Age].describe())
