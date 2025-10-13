@@ -30,15 +30,15 @@ df = pd.read_csv ("jupyter-notebooks/colorectal_cancer_dataset.csv", sep=";")
                   
 question = st.selectbox(
     "Select an analytical question:",
-    ["Q1: Age and Gender Distribution",
-     "Q2: Distribution of Cancer Stages",
-     "Q3: Survivability across Cancer Stages",
-     "Q4: Smoking History among Non-survivors",
-     "Q5: Tumor Size across Stages"]
+    ["Age and Gender Distribution",
+     "Distribution of Cancer Stages",
+     "Survivability across Cancer Stages",
+     "Smoking History among Non-survivors",
+     "Tumor Size across Stages"]
 )
 
-if "Q1" in question:
-    st.subheader("Q1: Age and Gender Distribution")
+if "Age and Gender Distribution" in question:
+    st.subheader("Age and Gender Distribution")
     st.write("What is the age and gender distribution of colorectal cancer patients in the dataset?")
 
     df["Age"] = pd.to_numeric(df["Age"], errors="coerce")
@@ -61,8 +61,8 @@ if "Q1" in question:
     st.write("**Descriptive Stats:**")
     st.dataframe(df.groupby("Gender")["Age"].describe().round(2))
 
-if "Q2" in question:
-    st.subheader("Q2: Distribution of Cancer Stages")
+if "Distribution of Cancer Stages" in question:
+    st.subheader("Distribution of Cancer Stages")
     st.write("What is the distribution of cancer stages among patients?")
 
     df["Cancer_Stage"] = df["Cancer_Stage"].astype(str).str.strip().str.title()
@@ -86,8 +86,8 @@ if "Q2" in question:
         )
         st.plotly_chart(fig_pie, use_container_width=True)
 
-if "Q3" in question:
-    st.subheader("Q3: Survivability Across Cancer Stages")
+if "Survivability Across Cancer Stages" in question:
+    st.subheader("Survivability Across Cancer Stages")
     st.write("How does survivability vary across cancer stages?")
 
     df["Cancer_Stage"] = df["Cancer_Stage"].astype(str).str.strip().str.title()
@@ -105,8 +105,8 @@ if "Q3" in question:
 
     st.dataframe(surv.rename(columns={"Survival_5_years":"Survival Rate (%)"}))
 
-if "Q4" in question:
-    st.subheader("Q4: Smoking Among Non-Survivors")
+if "Smoking Among Non-Survivors" in question:
+    st.subheader("Smoking Among Non-Survivors")
     st.write("Among patients who did not survive past 5 years, how many had a history of smoking?")
 
     df["Survival_5_years"] = df["Survival_5_years"].astype(str).str.lower().map({"yes":1, "no":0})
@@ -121,8 +121,8 @@ if "Q4" in question:
                  color=counts.index, color_discrete_sequence=px.colors.qualitative.Set2)
     st.plotly_chart(fig, use_container_width=True)
 
-if "Q5" in question:
-    st.subheader("Q5: Tumor Size Variation Across Stages")
+if "Tumor Size Variation Across Stages" in question:
+    st.subheader("Tumor Size Variation Across Stages")
     st.write("How does the average tumor size vary across cancer stages?")
 
     df["Cancer_Stage"] = df["Cancer_Stage"].astype(str).str.strip().str.title()
