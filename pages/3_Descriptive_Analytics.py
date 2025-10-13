@@ -29,7 +29,7 @@ st.markdown("""
 df = pd.read_csv ("jupyter-notebooks/colorectal_cancer_dataset.csv", sep=";")
                   
 question = st.selectbox(
-    "Select an analytical question:",
+    "Select an analysis:",
     ["Age and Gender Distribution",
      "Distribution of Cancer Stages",
      "Survivability across Cancer Stages",
