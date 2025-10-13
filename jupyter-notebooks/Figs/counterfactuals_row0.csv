@@ -1,4 +1,4 @@
-Patient_ID,Country,Age,Gender,Cancer_Stage,Tumor_Size_mm,Family_History,Smoking_History,Alcohol_Consumption,Obesity_BMI,Diet_Risk,Physical_Activity,Diabetes,Inflammatory_Bowel_Disease,Genetic_Mutation,Screening_History,Early_Detection,Treatment_Type,Mortality,Healthcare_Costs,Incidence_Rate_per_100K,Mortality_Rate_per_100K,Urban_or_Rural,Economic_Classification,Healthcare_Access,Insurance_Status,Survival_Prediction,Survival_5_years
-5002,Italy,69,F,Localized,60,No,No,No,Obese,High,High,Yes,No,No,Regular,Yes,Surgery,Yes,69996,52,11,Urban,Developing,Moderate,Insured,Yes,1
-5002,Italy,69,M,Localized,60,Yes,No,No,Obese,High,High,Yes,No,No,Irregular,Yes,Surgery,Yes,69996,52,11,Rural,Developing,Moderate,Insured,Yes,1
-5002,Italy,68,M,Localized,60,Yes,Yes,No,Obese,High,High,Yes,No,No,Regular,Yes,Surgery,Yes,69996,52,11,Urban,Developing,Moderate,Insured,Yes,1
+Age,Obesity_BMI,Family_History,Alcohol_Consumption,Diet_Risk,Screening_History,Survival_5_years
+85,Overweight,Yes,No,High,Regular,1
+31,Normal,Yes,No,High,Regular,1
+68,Obese,Yes,No,High,Regular,1
