@@ -45,12 +45,13 @@ if "Age and Gender Distribution" in question:
     df = df[(df["Age"] > 0) & (df["Age"] < 120)]
     df["Gender"] = df["Gender"].str.strip().str.title()
 
-    unique_genders = df["Gender"].dropna().unique().tolist()
-    selected_genders = st.multiselect(
-        "Select gender(s) to include:",
-        options=unique_genders,
-        default=unique_genders
-    )
+    selected_gender = st.radio(
+    "Select Gender:",
+    options=["All", "Male", "Female"],
+    index=0,
+    horizontal=True
+)
+
 
     min_age = int(df["Age"].min())
     max_age = int(df["Age"].max())
@@ -61,7 +62,7 @@ if "Age and Gender Distribution" in question:
         value=(min_age, max_age)
     )
 
-    df = df[df["Gender"].isin(selected_genders)]
+    df = df[df["Gender"].isin(selected_gender)]
     df = df[(df["Age"] >= age_range[0]) & (df["Age"] <= age_range[1])]
 
 
