@@ -1,123 +1,71 @@
 import streamlit as st
 import pandas as pd
-import joblib
 import numpy as np
+import joblib
+from sklearn.preprocessing import StandardScaler
 
-# ---------------------- PAGE CONFIG ---------------------- #
+# Streamlit page setup
 st.set_page_config(page_title="Predictive Analytics", layout="wide")
 
+# Sidebar
 st.sidebar.image("./assets/Colorectal Cancer Logo.png")
-st.sidebar.success("Select a Tab Above")
+st.sidebar.success("Select a tab above.")
 
+# Page header
 st.markdown("""
-    <style>
-        .hero {
-            background: linear-gradient(90deg, #1261B5 0%, #5FA8D3 100%);
-            padding: 40px 20px;
-            border-radius: 16px;
-            color: white;
-            text-align: center;
-            box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
-        }
-        .hero h1 {
-            font-size: 50px;
-            font-weight: 800;
-            margin-bottom: 10px;
-        }
-        .input-section, .result-section {
-            background-color: white;
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            margin-top: 30px;
-        }
-        .result-card {
-            border-radius: 16px;
-            padding: 25px;
-            text-align: center;
-            font-size: 20px;
-            font-weight: 600;
-            color: white;
-        }
-    </style>
+    <h1 style="
+        font-size: 60px;
+        font-weight: 700;
+        text-align: center;
+        color: #1261B5;
+    ">
+        Predictive Analytics
+    </h1>
 """, unsafe_allow_html=True)
 
-# ---------------------- HEADER ---------------------- #
-st.markdown("""
-<div class="hero">
-    <h1>Predictive Analytics</h1>
-    <p>Given a patient’s demographic, lifestyle, and clinical features, predict whether they will survive at least 5 years after a colorectal cancer diagnosis.</p>
-</div>
-""", unsafe_allow_html=True)
+# Load model safely
+model_path = "jupyter-notebooks/final_knn_k3_pipeline.joblib"
+try:
+    with open(model_path, "rb") as file:
+        model = joblib.load(file)
+    st.success("✅ Model loaded successfully!")
+except Exception as e:
+    st.error(f"❌ Error loading model: {e}")
+    st.stop()
 
-# ---------------------- LOAD MODEL ---------------------- #
-@st.cache_resource
-def load_model():
-    try:
-        model = joblib.load("jupyter-notebooks/final_knn_k3_pipeline.joblib")
-        return model
-    except Exception as e:
-        st.error(f"Error loading model: {e}")
-        return None
+# File upload or dataset
+st.markdown("### Upload or use default dataset")
+uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
 
-model = load_model()
+if uploaded_file is not None:
+    df = pd.read_csv(uploaded_file, sep=";")
+else:
+    df = pd.read_csv("jupyter-notebooks/postprocessed_colorectal_cancer_dataset.csv", sep=";")
 
-# ---------------------- PATIENT INPUTS ---------------------- #
-st.markdown("### 🧍‍♂️ Patient Information", unsafe_allow_html=True)
-st.markdown('<div class="input-section">', unsafe_allow_html=True)
+st.write("Sample of the data:")
+st.dataframe(df.head())
+
+# Prediction input section
+st.markdown("### Predict Patient Survivability")
 
 col1, col2, col3 = st.columns(3)
-
 with col1:
-    age = st.slider("Age", 20, 90, 55)
-    obesity_bmi = st.selectbox("Obesity (BMI Category)", ["Normal", "Overweight", "Obese"])
+    age = st.number_input("Age", min_value=18, max_value=120, value=60)
 with col2:
-    family_history = st.radio("Family History of Colorectal Cancer?", ["Yes", "No"])
-    alcohol = st.radio("Alcohol Consumption?", ["Yes", "No"])
+    tumor_size = st.number_input("Tumor Size (mm)", min_value=0, max_value=200, value=50)
 with col3:
-    diet_risk = st.selectbox("Dietary Risk", ["Low", "Moderate", "High"])
-    screening_history = st.selectbox("Screening History", ["Never", "Irregular", "Regular"])
+    stage = st.selectbox("Cancer Stage", ["Stage I", "Stage II", "Stage III", "Stage IV"])
 
-st.markdown('</div>', unsafe_allow_html=True)
+if st.button("Run Prediction", use_container_width=True):
+    try:
+        input_data = pd.DataFrame({
+            "Age": [age],
+            "Tumor_Size": [tumor_size],
+            "Stage": [stage]
+        })
 
-# ---------------------- PREDICTION ---------------------- #
-if st.button("🔍 Generate Prediction"):
-    if model is not None:
-        # Create DataFrame from inputs
-        input_data = pd.DataFrame([{
-            "Age": age,
-            "Obesity_BMI": obesity_bmi,
-            "Family_History": family_history,
-            "Alcohol_Consumption": alcohol,
-            "Diet_Risk": diet_risk,
-            "Screening_History": screening_history
-        }])
+        prediction = model.predict(input_data)
+        st.success(f"🧠 Predicted Outcome: **{prediction[0]}**")
 
-        # Predict
-        try:
-            pred_proba = model.predict_proba(input_data)[0][1]
-            pred_class = model.predict(input_data)[0]
-            
-            st.markdown('<div class="result-section">', unsafe_allow_html=True)
-            if pred_class == 1:
-                st.markdown(
-                    f"<div class='result-card' style='background-color:#2E8B57;'>✅ Likely to Survive 5 Years</div>",
-                    unsafe_allow_html=True)
-            else:
-                st.markdown(
-                    f"<div class='result-card' style='background-color:#D9534F;'>❌ Unlikely to Survive 5 Years</div>",
-                    unsafe_allow_html=True)
-
-            st.markdown(f"<p style='text-align:center;font-size:18px;'>Predicted probability of survival: <b>{pred_proba:.2%}</b></p>", unsafe_allow_html=True)
-            st.progress(int(pred_proba * 100))
-            st.markdown('</div>', unsafe_allow_html=True)
-        except Exception as e:
-            st.error(f"Error making prediction: {e}")
-    else:
-        st.warning("Model could not be loaded. Please check file path or format.")
-
-# ---------------------- FOOTER ---------------------- #
-st.markdown("""
-<hr style="margin-top: 50px;">
-<p style="text-align:center; color:gray;">Model: KNN (k=3) | Trained on cleaned colorectal cancer dataset</p>
-""", unsafe_allow_html=True)
+    except Exception as e:
+        st.error(f"⚠️ Prediction failed: {e}")
