@@ -26,7 +26,7 @@ st.markdown("""
     </h1>
 """, unsafe_allow_html=True)
 
-df = pd.read_csv ("jupyter-notebooks/colorectal_cancer_dataset.csv", sep=";")
+df = pd.read_csv ("jupyter-notebooks/postprocessed_colorectal_cancer_dataset.csv", sep=";")
                   
 question = st.selectbox(
     "Select an analysis:",
@@ -45,14 +45,6 @@ if "Age and Gender Distribution" in question:
     df = df[(df["Age"] > 0) & (df["Age"] < 120)]
     df["Gender"] = df["Gender"].str.strip().str.title()
 
-    selected_gender = st.radio(
-    "Select Gender:",
-    options=["All", "Male", "Female"],
-    index=0,
-    horizontal=True
-)
-
-
     min_age = int(df["Age"].min())
     max_age = int(df["Age"].max())
     age_range = st.slider(
@@ -62,9 +54,8 @@ if "Age and Gender Distribution" in question:
         value=(min_age, max_age)
     )
 
-    df = df[df["Gender"].isin(selected_gender)]
-    df = df[(df["Age"] >= age_range[0]) & (df["Age"] <= age_range[1])]
 
+    df = df[(df["Age"] >= age_range[0]) & (df["Age"] <= age_range[1])]
 
     col1, col2 = st.columns(2)
 
@@ -88,6 +79,16 @@ if "Distribution of Cancer Stages" in question:
 
     df["Cancer_Stage"] = df["Cancer_Stage"].astype(str).str.strip().str.title()
     stage_counts = df["Cancer_Stage"].value_counts()
+
+    selected_stages = st.multiselect(
+        "Select Cancer Stage(s):",
+        options=df["Cancer_Stage"].unique(),
+        default=df["Cancer_Stage"].unique()
+    )
+
+    df = df[df["Cancer_Stage"].isin(selected_stages)]
+    stage_counts = df["Cancer_Stage"].value_counts()
+
 
     col1, col2 = st.columns(2)
     with col1:
@@ -114,6 +115,14 @@ if "Survivability Across Cancer Stages" in question:
     df["Cancer_Stage"] = df["Cancer_Stage"].astype(str).str.strip().str.title()
     df["Survival_5_years"] = df["Survival_5_years"].str.strip().str.lower().map({"yes": 1, "no": 0})
     df_clean = df.dropna(subset=["Cancer_Stage", "Survival_5_years"])
+
+    selected_stages = st.multiselect(
+        "Select Cancer Stage(s):",
+        options=df_clean["Cancer_Stage"].unique(),
+        default=df_clean["Cancer_Stage"].unique()
+    )
+
+    df_clean = df_clean[df_clean["Cancer_Stage"].isin(selected_stages)]
 
     surv = df_clean.groupby("Cancer_Stage")["Survival_5_years"].mean().reset_index()
     surv["Survival_5_years"] *= 100
