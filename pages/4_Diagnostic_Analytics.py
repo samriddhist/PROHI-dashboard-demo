@@ -12,7 +12,6 @@ from sklearn.decomposition import PCA
 
 st.set_page_config(page_title="Diagnostic Analytics", layout="wide")
 
-# --- SIDEBAR ---
 st.sidebar.success("Select a tab above.")
 st.sidebar.image("./assets/Colorectal Cancer Logo.png")
 
@@ -74,66 +73,70 @@ elif "Clustering" in analysis:
     st.subheader("Patient Clustering by Risk Factors and Outcomes")
     st.caption("Identify patient groups based on clinical and lifestyle features.")
 
-    n_clusters = st.slider("Select number of clusters:", 2, 6, 3)
-
-    features = [
+    available_features = [
         'Age', 'Cancer_Stage', 'Tumor_Size_mm', 'Family_History', 'Smoking_History',
         'Alcohol_Consumption', 'Obesity_BMI', 'Diet_Risk', 'Physical_Activity',
         'Diabetes', 'Genetic_Mutation', 'Screening_History', 'Early_Detection', 'Treatment_Type'
     ]
-
-    df_cluster = df[features].dropna()
-    num_cols = ['Age', 'Tumor_Size_mm']
-    cat_cols = [c for c in features if c not in num_cols]
-
-    preprocess = ColumnTransformer([
-        ('num', StandardScaler(), num_cols),
-        ('cat', OneHotEncoder(drop='first'), cat_cols)
-    ])
-
-    pipe = Pipeline([
-        ('prep', preprocess),
-        ('kmeans', KMeans(n_clusters=n_clusters, random_state=42, n_init='auto'))
-    ])
-
-    df['Cluster'] = pipe.fit_predict(df_cluster)
-
-    st.markdown("### Cluster Profiles")
-    cluster_profile = df.groupby('Cluster').agg({
-        'Age': 'mean',
-        'Tumor_Size_mm': 'mean',
-        'Cancer_Stage': lambda x: x.value_counts().index[0],
-        'Smoking_History': lambda x: x.value_counts().index[0],
-        'Alcohol_Consumption': lambda x: x.value_counts().index[0],
-        'Treatment_Type': lambda x: x.value_counts().index[0]
-    })
-    st.dataframe(cluster_profile.round(2))
-
-    st.markdown("<hr>", unsafe_allow_html=True)
-
-    tab = pd.crosstab(df['Cluster'], df['Survival_5_years'], normalize='index') * 100
-    fig, ax = plt.subplots(figsize=(6, 4))
-    sns.heatmap(tab, annot=True, fmt=".1f", cmap="Greens", ax=ax)
-    ax.set_title("5-Year Survival Rate (%) per Cluster")
-    st.pyplot(fig)
-
-    X_trans = pipe.named_steps['prep'].transform(df_cluster)
-    pca = PCA(n_components=2).fit_transform(X_trans)
-    pca_df = pd.DataFrame(pca, columns=["PC1", "PC2"])
-    pca_df["Cluster"] = df['Cluster']
-
-    fig_pca = px.scatter(
-        pca_df, x="PC1", y="PC2",
-        color=pca_df["Cluster"].astype(str),
-        title="Patient Clusters by Risk Factors (PCA 2D)",
-        color_discrete_sequence=px.colors.qualitative.Set2
+    
+    selected_features = st.multiselect(
+        "Select features to include in clustering:",
+        available_features,
+        default=['Age', 'Cancer_Stage', 'Tumor_Size_mm', 'Smoking_History']
     )
 
-    fig_pca.update_layout(
-        xaxis=dict(range=[-4, 4]),
-        yaxis=dict(range=[-4, 4])
-    )
+    if len(selected_features) < 2:
+        st.warning("Please select at least 2 features for clustering.")
+    else:
+        n_clusters = st.slider("Select number of clusters:", 2, 6, 3)
 
-    st.plotly_chart(fig_pca, use_container_width=True)
+        df_cluster = df[selected_features].dropna()
+        num_cols = [c for c in selected_features if df[c].dtype in [np.int64, np.float64]]
+        cat_cols = [c for c in selected_features if c not in num_cols]
 
-    st.caption("Clusters are derived using K-Means on normalized and encoded clinical risk features.")
+        preprocess = ColumnTransformer([
+            ('num', StandardScaler(), num_cols),
+            ('cat', OneHotEncoder(drop='first'), cat_cols)
+        ])
+
+        pipe = Pipeline([
+            ('prep', preprocess),
+            ('kmeans', KMeans(n_clusters=n_clusters, random_state=42, n_init='auto'))
+        ])
+
+        df['Cluster'] = pipe.fit_predict(df_cluster)
+
+        st.markdown("### Cluster Profiles")
+        agg_dict = {col: (np.mean if col in num_cols else lambda x: x.value_counts().index[0])
+                    for col in selected_features}
+        cluster_profile = df.groupby('Cluster').agg(agg_dict)
+        st.dataframe(cluster_profile.round(2))
+
+        st.markdown("<hr>", unsafe_allow_html=True)
+
+        if 'Survival_5_years' in df.columns:
+            tab = pd.crosstab(df['Cluster'], df['Survival_5_years'], normalize='index') * 100
+            fig, ax = plt.subplots(figsize=(6, 4))
+            sns.heatmap(tab, annot=True, fmt=".1f", cmap="Greens", ax=ax)
+            ax.set_title("5-Year Survival Rate (%) per Cluster")
+            st.pyplot(fig)
+
+        X_trans = pipe.named_steps['prep'].transform(df_cluster)
+        pca = PCA(n_components=2).fit_transform(X_trans)
+        pca_df = pd.DataFrame(pca, columns=["PC1", "PC2"])
+        pca_df["Cluster"] = df['Cluster']
+
+        fig_pca = px.scatter(
+            pca_df, x="PC1", y="PC2",
+            color=pca_df["Cluster"].astype(str),
+            title="Patient Clusters by Risk Factors (PCA 2D)",
+            color_discrete_sequence=px.colors.qualitative.Set2
+        )
+
+        fig_pca.update_layout(
+            xaxis=dict(range=[-4, 4]),
+            yaxis=dict(range=[-4, 4])
+        )
+
+        st.plotly_chart(fig_pca, use_container_width=True)
+        st.caption("Clusters are derived using K-Means on normalized and encoded clinical risk features.")
