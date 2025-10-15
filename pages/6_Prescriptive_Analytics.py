@@ -4,7 +4,7 @@ import joblib
 import pickle
 import plotly.express as px
 
-st.set_page_config(page_title="Predictive Analytics", layout="wide")
+st.set_page_config(page_title="Prescriptive Analytics", layout="wide")
 st.sidebar.success("Select a tab above.")
 st.sidebar.image("./assets/Colorectal Cancer Logo.png")
 
