@@ -93,21 +93,16 @@ with top_row[2]:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-bottom_row = st.columns([1, 0.5, 1])
+bottom_row = st.columns([1])
+
 
 with bottom_row[0]:
     st.markdown("""
-    <div class="card">
-        <h3 style="color:#1261B5;">📚 Predictive Analysis</h3>
+    <div class="card" style="text-align: center;">
+        <h3 style="color:#1261B5;">💡 Prescriptive Analysis</h3>
     </div>
     """, unsafe_allow_html=True)
 
-with bottom_row[2]:
-    st.markdown("""
-    <div class="card">
-        <h3 style="color:#1261B5;">💡Prescriptive Analysis</h3>
-    </div>
-    """, unsafe_allow_html=True)
 
 st.markdown("""
 <div class="section">
