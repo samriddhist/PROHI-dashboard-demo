@@ -139,4 +139,3 @@ elif "Clustering" in analysis:
         )
 
         st.plotly_chart(fig_pca, use_container_width=True)
-        st.caption("Clusters are derived using K-Means on normalized and encoded clinical risk features.")
