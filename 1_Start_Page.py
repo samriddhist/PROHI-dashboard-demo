@@ -69,39 +69,36 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-top_row = st.columns(3)
+top_row = st.columns(4)
 with top_row[0]:
     st.markdown("""
-    <div class="card">
+     <div class="card" style="text-align: center;">
         <h3 style="color:#1261B5;">📊 Descriptive Analytics</h3>
     </div>
     """, unsafe_allow_html=True)
 
 with top_row[1]:
     st.markdown("""
-    <div class="card">
+     <div class="card" style="text-align: center;">
         <h3 style="color:#1261B5;">🧠 Diagnostic Analytics</h3>
     </div>
     """, unsafe_allow_html=True)
 
 with top_row[2]:
     st.markdown("""
-    <div class="card">
+     <div class="card" style="text-align: center;">
         <h3 style="color:#1261B5;">📈 Predictive Analytics</h3>
     </div>
     """, unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
-
-bottom_row = st.columns([1])
-
-
-with bottom_row[0]:
+with top_row[3]:
     st.markdown("""
     <div class="card" style="text-align: center;">
         <h3 style="color:#1261B5;">💡 Prescriptive Analysis</h3>
     </div>
     """, unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
 
 
 st.markdown("""
