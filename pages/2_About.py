@@ -62,7 +62,7 @@ st.markdown("""
     <div class="card">
         <p style="color:black; font-size:16px;">
             This dashboard uses the <a href="https://www.kaggle.com/datasets/ankushpanday2/colorectal-cancer-global-dataset-and-predictions/data" target="_blank">Colorectal Cancer Global Dataset</a>.
-            It contains <b>28 features</b> including demographic, medical, and lifestyle factors relevant to colorectal cancer.
+            It contains <b>28 features</b> including demographic, medical, and lifestyle factors relevant to colorectal cancer. This dataset is <b>syntheitc</b>, therefore limiting the analysis potential. 
         </p>
     </div>
 </div>
