@@ -41,7 +41,6 @@ input_df = pd.DataFrame([{
     "Screening_History": screening_history
 }])
 
-# Ensure consistent capitalization
 for c in input_df.columns:
     input_df[c] = input_df[c].astype(str).str.strip().str.capitalize()
 
