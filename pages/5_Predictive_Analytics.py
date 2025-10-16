@@ -4,8 +4,8 @@ import joblib
 import pickle
 import os
 import numpy as np
+import importlib
 
-# ------------------ Page Setup ------------------ #
 st.set_page_config(page_title="Predictive Analytics", layout="wide")
 st.sidebar.success("Select a tab above.")
 st.sidebar.image("./assets/Colorectal Cancer Logo.png")
@@ -16,46 +16,75 @@ Predictive Analytics
 </h1>
 """, unsafe_allow_html=True)
 
-# ------------------ Load Models ------------------ #
 @st.cache_resource
 def load_artifacts():
     pipe_path = os.path.join("jupyter-notebooks", "final_knn_k3_pipeline.joblib")
+    preproc_paths = [
+        os.path.join("jupyter-notebooks", "preprocessor.joblib"),
+        os.path.join("jupyter-notebooks", "preprocessor.pickle"),
+        os.path.join("jupyter-notebooks", "preprocessor.pkl"),
+    ]
     clf_path = os.path.join("jupyter-notebooks", "trained_model.pickle")
 
     pipe = None
+    preprocessor = None
     clf = None
 
-    # Load full pipeline
+    try:
+        ct_mod = importlib.import_module("sklearn.compose._column_transformer")
+        if not hasattr(ct_mod, "_RemainderColsList"):
+            class _RemainderColsList:
+                def __init__(self, *args, **kwargs):
+                    pass
+            setattr(ct_mod, "_RemainderColsList", _RemainderColsList)
+    except Exception:
+        pass
+
     if os.path.exists(pipe_path):
         try:
             pipe = joblib.load(pipe_path)
         except Exception as e:
             st.warning(f"❌ Failed to load pipeline: {e}")
     else:
-        st.warning(f"❌ Pipeline file not found at {pipe_path}")
+        st.info(f"Pipeline file not found at {pipe_path} (this is OK if you have separate preprocessor + classifier)")
 
-    # Load classifier only
+    for p in preproc_paths:
+        if os.path.exists(p):
+            try:
+                preprocessor = joblib.load(p)
+                break
+            except Exception:
+                try:
+                    with open(p, "rb") as f:
+                        preprocessor = pickle.load(f)
+                        break
+                except Exception as e:
+                    st.warning(f"❌ Failed to load preprocessor at {p}: {e}")
+
+    if preprocessor is None:
+        st.info("No standalone preprocessor artifact found. Will attempt manual preprocessing fallback when needed.")
+
     if os.path.exists(clf_path):
         try:
             clf = pickle.load(open(clf_path, "rb"))
         except Exception as e:
             st.warning(f"❌ Failed to load classifier: {e}")
     else:
-        st.warning(f"❌ Classifier file not found at {clf_path}")
+        st.info(f"Classifier file not found at {clf_path}")
 
-    return pipe, clf
+    return pipe, preprocessor, clf
 
-pipeline, classifier = load_artifacts()
+pipeline, preprocessor, classifier = load_artifacts()
 
 if pipeline is None and classifier is None:
     st.error(
         "No model artifacts loaded. Make sure the following files exist in your GitHub repo:\n"
         "- `jupyter-notebooks/final_knn_k3_pipeline.joblib` (recommended full pipeline)\n"
-        "- `jupyter-notebooks/trained_model.pickle` (classifier only)"
+        "- `jupyter-notebooks/trained_model.pickle` (classifier only)\n"
+        "- optional: `jupyter-notebooks/preprocessor.joblib` (preprocessor only)"
     )
     st.stop()
 
-# ------------------ Input Form ------------------ #
 st.subheader("Select patient data and see the predicted survivability of 5 years:")
 
 age = st.number_input("Age", min_value=0, max_value=120, value=50)
@@ -74,23 +103,22 @@ input_df = pd.DataFrame([{
     "Screening_History": screening_history
 }])
 
-# Capitalize & clean categorical inputs
 for c in ["Obesity_BMI", "Diet_Risk", "Screening_History", "Family_History", "Alcohol_Consumption"]:
     input_df[c] = input_df[c].astype(str).str.strip().str.capitalize()
 
-# Reorder columns
 cols_order = ["Age", "Obesity_BMI", "Family_History", "Alcohol_Consumption", "Diet_Risk", "Screening_History"]
 input_df = input_df[cols_order]
 
-# ------------------ Prediction ------------------ #
 if st.button("Predict 5-Year Survival"):
     try:
-        # Full pipeline available
         if pipeline is not None:
             pred = pipeline.predict(input_df)
             proba = None
             if hasattr(pipeline, "predict_proba"):
-                proba = pipeline.predict_proba(input_df)[:, 1]
+                try:
+                    proba = pipeline.predict_proba(input_df)[:, 1]
+                except Exception:
+                    proba = None
 
             if int(pred[0]) == 1:
                 st.success(
@@ -102,17 +130,67 @@ if st.button("Predict 5-Year Survival"):
                     f"🟥 Predicted: Not survive 5 years — Probability: {proba[0]:.2f}"
                     if proba is not None else "🟥 Predicted: Not survive 5 years"
                 )
-            st.progress(float(proba[0]) if proba is not None else 0)
+            if proba is not None:
+                st.progress(float(proba[0]))
             st.stop()
 
-        # Only classifier loaded
         if classifier is not None:
-            st.error(
-                "❌ Only classifier loaded (`trained_model.pickle`). This file expects numeric input, "
-                "but no preprocessor is available.\n\n"
-                "✅ Best fix: save and load the full pipeline (preprocessing + classifier) as a single artifact."
-            )
-            st.stop()
+            X_proc = None
+            if preprocessor is not None:
+                try:
+                    X_proc = preprocessor.transform(input_df)
+                except Exception as e:
+                    st.warning(f"Preprocessor exists but failed to transform input: {e}")
+                    X_proc = None
+
+            if X_proc is None:
+                mapping = {
+                    "Obesity_BMI": {"Normal": 0, "Overweight": 1, "Obese": 2},
+                    "Family_History": {"No": 0, "Yes": 1},
+                    "Alcohol_Consumption": {"No": 0, "Yes": 1},
+                    "Diet_Risk": {"Low": 0, "Moderate": 1, "High": 2},
+                    "Screening_History": {"Never": 0, "Irregular": 1, "Regular": 2}
+                }
+                X_manual = input_df.copy()
+                for col, m in mapping.items():
+                    X_manual[col] = X_manual[col].map(m)
+                try:
+                    X_proc = X_manual.astype(float).to_numpy()
+                except Exception as e:
+                    st.error(f"Failed to apply manual preprocessing fallback: {e}")
+                    st.stop()
+            try:
+                pred = classifier.predict(X_proc)
+                proba = None
+                if hasattr(classifier, "predict_proba"):
+                    try:
+                        proba = classifier.predict_proba(X_proc)[:, 1]
+                    except Exception:
+                        proba = None
+
+                if int(pred[0]) == 1:
+                    st.success(
+                        f"🟩 Predicted: Survive 5 years — Probability: {proba[0]:.2f}"
+                        if proba is not None else "🟩 Predicted: Survive 5 years"
+                    )
+                else:
+                    st.warning(
+                        f"🟥 Predicted: Not survive 5 years — Probability: {proba[0]:.2f}"
+                        if proba is not None else "🟥 Predicted: Not survive 5 years"
+                    )
+                if proba is not None:
+                    st.progress(float(proba[0]))
+                st.stop()
+            except Exception as e:
+                st.error(f"❌ Error generating prediction with classifier: {e}")
+                st.stop()
+
+        st.error(
+            "❌ Only classifier loaded (`trained_model.pickle`). This file expects numeric input, "
+            "but no preprocessor is available.\n\n"
+            "✅ Best fix: save and load the full pipeline (preprocessing + classifier) as a single artifact."
+        )
+        st.stop()
 
     except Exception as e:
         st.error(f"❌ Error generating prediction: {e}")
