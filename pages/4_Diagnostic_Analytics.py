@@ -22,9 +22,16 @@ st.markdown("""
         text-align: center;
         color: #1261B5;
     ">
-        Descriptive Analytics
+        Diagnostic Analytics
     </h1>
 """, unsafe_allow_html=True)
+
+# Intro text for the page
+st.write("""
+This page allows you to explore diagnostic insights from the colorectal cancer dataset. 
+You can analyze relationships between variables (correlation) or group patients into clusters based on clinical and lifestyle features. 
+Use the interactive options below to select features, filter data, and understand patterns in the dataset.
+""")
 
 df = pd.read_csv("jupyter-notebooks/postprocessed_colorectal_cancer_dataset.csv", sep=";")
 
@@ -38,6 +45,7 @@ analysis = st.selectbox(
 
 if "Correlation" in analysis:
     st.subheader("Feature Correlation Analysis")
+    st.write("Examine how key patient features relate to each other. Correlation helps identify which variables tend to increase or decrease together.")
 
     df['Cancer_Stage_Encoded'] = df['Cancer_Stage'].map({'Localized': 1, 'Regional': 2, 'Metastatic': 3})
     df['Survival_Prediction_Encoded'] = df['Survival_Prediction'].map({'No': 0, 'Yes': 1})
@@ -66,12 +74,22 @@ if "Correlation" in analysis:
             sns.heatmap(corr_matrix, annot=True, cmap="coolwarm", fmt=".2f", ax=ax)
             ax.set_title("Spearman Correlation Heatmap")
             st.pyplot(fig)
+
+        st.write("""
+         **Interpretation:** 
+        Values close to 1 or -1 indicate strong positive or negative relationships respectively. 
+        Use this insight to understand which features may influence outcomes such as survival or cancer progression.
+        """)
     else:
         st.warning("Please select at least two features to view correlations.")
 
+
 elif "Clustering" in analysis:
     st.subheader("Patient Clustering by Risk Factors and Outcomes")
-    st.caption("Identify patient groups based on clinical and lifestyle features.")
+    st.write("""
+    Group patients into clusters based on selected clinical and lifestyle features. 
+    Clustering can reveal patterns in risk factors and outcomes, helping identify subgroups of patients with similar characteristics.
+    """)
 
     available_features = [
         'Age', 'Cancer_Stage', 'Tumor_Size_mm', 'Family_History', 'Smoking_History',
@@ -139,3 +157,9 @@ elif "Clustering" in analysis:
         )
 
         st.plotly_chart(fig_pca, use_container_width=True)
+
+        st.write("""
+        **Interpretation:** 
+        Clusters group patients with similar risk profiles and outcomes. 
+        Review the cluster profiles and PCA plot to identify high-risk groups and patterns in the dataset.
+        """)
