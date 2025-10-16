@@ -17,6 +17,16 @@ st.markdown("""
     </h1>
 """, unsafe_allow_html=True)
 
+st.markdown("""
+<div style="text-align:center; padding: 10px; background-color:#1261B5; border-radius:8px;">
+    <p style="font-size:18px; color:white;">
+        Explore key characteristics of the colorectal cancer dataset using interactive charts and tables.
+        Use the dropdowns and sliders to filter data and gain insights into patient demographics, cancer stages, survivability, smoking history, and tumor size.
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
+
 df = pd.read_csv("jupyter-notebooks/postprocessed_colorectal_cancer_dataset.csv", sep=";")
 
 question = st.selectbox(
@@ -32,7 +42,7 @@ question = st.selectbox(
 
 if question == "Age and Gender Distribution":
     st.subheader("Age and Gender Distribution")
-    st.write("What is the age and gender distribution of colorectal cancer patients in the dataset?")
+    st.write("Understand the age distribution and gender composition of patients in the dataset. Use the slider to focus on specific age ranges.")
 
     min_age = int(df["Age"].min())
     max_age = int(df["Age"].max())
@@ -55,9 +65,10 @@ if question == "Age and Gender Distribution":
     st.write("**Descriptive Stats:**")
     st.dataframe(df_filtered.groupby("Gender")["Age"].describe().round(2))
 
+
 elif question == "Distribution of Cancer Stages":
     st.subheader("Distribution of Cancer Stages")
-    st.write("What is the distribution of cancer stages among patients?")
+    st.write("See how patients are distributed across different cancer stages. Select a specific stage or view all patients together.")
 
     selected_stage = st.radio(
         "Select a Cancer Stage:",
@@ -87,9 +98,10 @@ elif question == "Distribution of Cancer Stages":
         )
         st.plotly_chart(fig_pie, use_container_width=True)
 
+
 elif question == "Survivability Across Cancer Stages":
     st.subheader("Survivability Across Cancer Stages")
-    st.write("How does survivability vary across cancer stages?")
+    st.write("Compare the 5-year survival rate across different cancer stages to understand prognosis trends.")
 
     df["Survival_5_years"] = df["Survival_5_years"].map({"Yes": 1, "No": 0})
     df_clean = df.dropna(subset=["Cancer_Stage", "Survival_5_years"])
@@ -113,9 +125,10 @@ elif question == "Survivability Across Cancer Stages":
     st.plotly_chart(fig, use_container_width=True)
     st.dataframe(surv.rename(columns={"Survival_5_years": "Survival Rate (%)"}))
 
+
 elif question == "Smoking History Among Non-Survivors":
     st.subheader("Smoking History Among Non-Survivors")
-    st.write("Among patients who did not survive past 5 years, how many had a history of smoking?")
+    st.write("Analyze the smoking habits of patients who did not survive past 5 years. Filter by gender and cancer stage.")
 
     df["Survival_5_years"] = df["Survival_5_years"].map({"Yes": 1, "No": 0})
     df["Smoking_History"] = df["Smoking_History"].map({"Yes": 1, "No": 0})
@@ -150,9 +163,10 @@ elif question == "Smoking History Among Non-Survivors":
     )
     st.plotly_chart(fig, use_container_width=True)
 
+
 elif question == "Tumor Size Across Stages":
     st.subheader("Tumor Size Across Stages")
-    st.write("How does the average tumor size vary across cancer stages?")
+    st.write("Investigate how tumor size varies across cancer stages. Larger tumors may indicate more advanced disease.")
 
     selected_stage = st.radio(
         "Select Cancer Stage:",
