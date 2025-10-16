@@ -1,6 +1,6 @@
 # PROHI Dashboard Example
 
-# [Cancer Survivability prediction RECTUM-Rippers]
+# [Cancer Survivability prediction - ColorectalCrew]
 
 _You can modify this README file with all the information that your team consider relevant for a technical audience who would like to understand your project or to run it in the future._
 
@@ -10,18 +10,16 @@ Include the name, logo and images refering to your project
 
 
 
-![Your dashboard](./assets/example-image.jpg)
-
-
-
+![Predicting Colorectal Cancer Survivability](./assets/project-logo.jpg)
 
 ## Introduction
 
-[Project ] is an interactive web dashboard to.... .
+[Predicting Colorectal Cancer Survivability by ColorectalCrew] is an interactive web dashboard that predicts **5-year survivability** for colorectal-cancer patients and explains each prediction with **SHAP** and **counterfactual “what-if”** analysis. The dashboard integrates descriptive, diagnostic, predictive, and prescriptive analytics to support exploration, risk stratification practice, and transparent model reasoning on an openly available dataset.
 
-The problem detected was...
+The problem we address is the lack of **accessible, data-driven tools** that combine demographic, lifestyle, and clinical variables into an individualized survivability estimate usable for planning treatment and discussing expectations.
 
-The proposed solution is valuable because...
+Our proposed solution is valuable because it demonstrates an end-to-end, **reproducible** pipeline—from data cleaning and EDA to model training and explanation—delivered as a simple web app that others can run, inspect, and extend.
+
 
 ## System description
 
