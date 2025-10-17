@@ -37,11 +37,25 @@ st.markdown("""
             padding: 25px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
             height: 100%;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.25s, box-shadow 0.25s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            border: 2px solid transparent;
         }
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 6px 12px rgba(18,97,181,0.2);
+            border: 2px solid #1261B5;
+        }
+        .card h3 {
+            color: #1261B5;
+            margin: 10px 0 0 0;
+        }
+        .card p {
+            color: #333;
+            font-size: 15px;
+            margin-top: 8px;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -70,35 +84,35 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 top_row = st.columns(4)
+
 with top_row[0]:
     st.markdown("""
-     <div class="card" style="text-align: center;">
-        <h3 style="color:#1261B5;">📊 Descriptive Analytics</h3>
-    </div>
+     <a href="/Descriptive_Analytics" target="_self" class="card">
+        <h3>📊 Descriptive Analytics</h3>
+     </a>
     """, unsafe_allow_html=True)
 
 with top_row[1]:
     st.markdown("""
-     <div class="card" style="text-align: center;">
-        <h3 style="color:#1261B5;">🧠 Diagnostic Analytics</h3>
-    </div>
+     <a href="/Diagnostic_Analytics" target="_self" class="card">
+        <h3>🧠 Diagnostic Analytics</h3>
+     </a>
     """, unsafe_allow_html=True)
 
 with top_row[2]:
     st.markdown("""
-     <div class="card" style="text-align: center;">
-        <h3 style="color:#1261B5;">📈 Predictive Analytics</h3>
-    </div>
+     <a href="/Predictive_Analytics" target="_self" class="card">
+        <h3>📈 Predictive Analytics</h3>
+     </a>
     """, unsafe_allow_html=True)
 
 with top_row[3]:
     st.markdown("""
-    <div class="card" style="text-align: center;">
-        <h3 style="color:#1261B5;">💡 Prescriptive Analysis</h3>
-    </div>
+     <a href="/Prescriptive_Analytics" target="_self" class="card">
+        <h3>💡 Prescriptive Analytics</h3>
+     </a>
     """, unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
-
 
 
