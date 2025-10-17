@@ -30,9 +30,6 @@ try:
 except Exception as e:
     st.warning(f"Shim injection warning: {e}")
 
-# ----------------------- #
-# Load the trained pipeline
-# ----------------------- #
 MODEL_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "jupyter-notebooks", "assets", "final_knn_k3_pipeline.joblib"))
 
 st.write(f"📂 Looking for model at: {MODEL_PATH}")
@@ -42,8 +39,18 @@ if not os.path.exists(MODEL_PATH):
     st.stop()
 
 try:
-    pipeline = joblib.load(MODEL_PATH)
+    obj = joblib.load(MODEL_PATH)
+
+    # If the file contains a list, pick the first sklearn-like object
+    if isinstance(obj, list):
+        st.warning("Model file contains a list — extracting pipeline...")
+        from sklearn.pipeline import Pipeline
+        pipeline = next((x for x in obj if isinstance(x, Pipeline)), obj[0])
+    else:
+        pipeline = obj
+
     st.success("✅ Pipeline loaded successfully.")
+
 except Exception as e:
     st.error(f"❌ Error loading pipeline: {e}")
     st.stop()
