@@ -142,11 +142,8 @@ If you are using Mac, you may need to follow install Xcode. Check the official S
 ### Execution
 
 To run the dashboard execute the following command:
+streamlit run 1_Start_Page.py
 
-```
-> streamlit run Dashboard.py
-# If the command above fails, use:
-> python -m streamlit run Dashboard.py
-```
+ 
 
 
