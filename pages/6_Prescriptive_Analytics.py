@@ -27,7 +27,7 @@ except Exception as e:
     st.warning(f"Shim injection warning: {e}")
 
 
-MODEL_PATH = "jupyter-notebooks/final_knn_k3_pipeline.joblib"
+MODEL_PATH = "jupyter-notebooks/assets/final_knn_k3_pipeline.joblib"
 if not os.path.exists(MODEL_PATH):
     st.error(f"Pipeline not found at {MODEL_PATH}")
     st.stop()
