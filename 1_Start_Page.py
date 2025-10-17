@@ -101,11 +101,4 @@ with top_row[3]:
 st.markdown("<br>", unsafe_allow_html=True)
 
 
-st.markdown("""
-<div class="section">
-    <h2 style="color:#1261B5;">Navigation</h2>
-    <p style="font-size:17px; color:white;">Use the sidebar to navigate through the different analysis</p>
-</div>
-""", unsafe_allow_html=True)
-
 
