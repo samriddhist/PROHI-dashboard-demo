@@ -69,7 +69,7 @@ st.markdown("""
 st.markdown("""
 <div class="section">
     <h2 style="color:#1261B5;">About Colorectal Cancer</h2>
-    <p style="max-width:800px; margin:auto; font-size:17px; color:white;">
+    <p style="max-width:800px; margin:auto; font-size:17px; color:#1261B5;">
         Colorectal cancer arises from abnormal cell growth in the colon or rectum. 
         It is one of the most common cancers globally, with over <b>1.9 million new cases</b> and <b>900,000 deaths annually</b>. 
         Understanding the patterns behind survivability is crucial for prevention, early detection, and effective treatment.
