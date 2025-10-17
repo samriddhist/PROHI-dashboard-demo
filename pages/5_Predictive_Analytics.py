@@ -13,6 +13,18 @@ Predictive Analytics
 </h1>
 """, unsafe_allow_html=True)
 
+st.markdown("""
+<div style="text-align:center; padding: 10px; background-color:#1261B5; border-radius:8px;">
+    <p style="font-size:18px; color:white;">
+      This page allows you to explore predictive insights from the colorectal cancer dataset.
+You can predict 5-year survival outcomes based on demographic, lifestyle, and clinical features.
+Use the interactive options below to select features and generate survival predictions.
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
+
+
 @st.cache_resource
 def load_pipeline():
     model_path = "jupyter-notebooks/assets/trained_model.joblib"
