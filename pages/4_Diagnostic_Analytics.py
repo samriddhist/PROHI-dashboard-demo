@@ -26,12 +26,16 @@ st.markdown("""
     </h1>
 """, unsafe_allow_html=True)
 
-# Intro text for the page
-st.write("""
-This page allows you to explore diagnostic insights from the colorectal cancer dataset. 
+st.markdown("""
+<div style="text-align:center; padding: 10px; background-color:#1261B5; border-radius:8px;">
+    <p style="font-size:18px; color:white;">
+      This page allows you to explore diagnostic insights from the colorectal cancer dataset. 
 You can analyze relationships between variables (correlation) or group patients into clusters based on clinical and lifestyle features. 
 Use the interactive options below to select features, filter data, and understand patterns in the dataset.
-""")
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
 
 df = pd.read_csv("jupyter-notebooks/postprocessed_colorectal_cancer_dataset.csv", sep=";")
 
