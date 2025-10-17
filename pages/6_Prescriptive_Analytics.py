@@ -55,9 +55,7 @@ except Exception as e:
     st.error(f"❌ Error loading pipeline: {e}")
     st.stop()
 
-# ----------------------- #
-# User input form
-# ----------------------- #
+
 st.subheader("Input patient data to see predictions & explanations:")
 
 age = st.number_input("Age", min_value=0, max_value=120, value=50)
