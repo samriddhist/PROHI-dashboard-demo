@@ -1,4 +1,4 @@
 Age,Obesity_BMI,Family_History,Alcohol_Consumption,Diet_Risk,Screening_History,Survival_5_years
-69,Normal,Yes,No,High,Irregular,1
-55,Obese,No,No,High,Regular,1
-86,Obese,Yes,No,High,Irregular,1
+81,Obese,Yes,No,High,Regular,1
+62,Obese,Yes,No,Low,Regular,1
+69,Obese,Yes,No,High,Never,1
